@@ -993,7 +993,11 @@ def terminal_size():
     if par.nocolor:
         return [100, 45]
     else:
-        return list(_os.get_terminal_size())
+        try:
+            return list(_os.get_terminal_size())
+        except:
+            return [2048, 1024]
+
 
 def savefig(path = None):
     """\nIt saves the plot canvas (without colors) as a text file, at the address provided in input.\n"""
