@@ -32,7 +32,6 @@ SIZE = os.getenv('PLT_SIZE')
 parser = argparse.ArgumentParser(description='plot in the terminal from stdin')
 
 group = parser.add_mutually_exclusive_group()
-
 group.add_argument('--line', '-l',      action='store_true')
 group.add_argument('--scatter', '-s',   action='store_true')
 group.add_argument('--histogram', '-t', action='store_true')
@@ -73,5 +72,5 @@ if SIZE is not None and len(SIZE) > 0:
     w = float(size[0])
     h = float(size[1])
     plt.figsize(w, h)
-
+plt.nocolor()
 plt.show()
