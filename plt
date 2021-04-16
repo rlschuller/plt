@@ -21,7 +21,7 @@ For 2, the format is
 import argparse
 import sys
 import os
-import plotext as plt
+import misc.plotext as plt
 import re
 from math import ceil, sqrt
 
