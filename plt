@@ -21,7 +21,6 @@ For 2, the format is
 import argparse
 import sys
 import os
-import misc.plotext.plot as plt
 import re
 from math import ceil, sqrt
 
@@ -29,8 +28,8 @@ from math import ceil, sqrt
 # PLT_SIZE="w:h"
 SIZE = os.getenv('PLT_SIZE')
 
-parser = argparse.ArgumentParser(description='plot in the terminal from stdin')
-
+parser = argparse.ArgumentParser(description='read floating points from stdin and plot in stdout')
+parser.add_argument("--pdf", action='store_true', default=False, help="output pdf to stdout")
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--line', '-l',      action='store_true')
 group.add_argument('--scatter', '-s',   action='store_true')
@@ -48,29 +47,41 @@ for line in sys.stdin:
     v = v + x
 
 
+if SIZE is not None and len(SIZE) > 0:
+    size = SIZE.split(':')
+    w = float(size[0])
+    h = float(size[1])
+
+if args.pdf:
+    import matplotlib
+    matplotlib.use('pdf')
+    import matplotlib.pyplot as plt
+    cm = 1/2.54  # centimeters in inches
+    if SIZE is not None and len(SIZE) > 0:
+        plt.figure(figsize=(w*cm, h*cm))
+    plt.rc('font', size=8)
+else:
+    import misc.plotext.plot as plt
+
 if not (args.line or args.scatter or args.histogram):
     args.line = True
 
 if args.line:
-    plt.plot(v, line_color='yellow')
+    plt.plot(v)
 
 if args.scatter:
     x = [v[2*i] for i in range(len(v)//2)]
     y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
-    plt.scatter(x, y, point_color='yellow')
+    plt.scatter(x, y)
 
 if args.histogram:
     bins = ceil(sqrt(len(v)))
     plt.hist(v, bins)
 
-plt.canvas_color('black')
-plt.axes_color('black')
-plt.ticks_color('white')
-
-if SIZE is not None and len(SIZE) > 0:
-    size = SIZE.split(':')
-    w = float(size[0])
-    h = float(size[1])
-    plt.figsize(w, h)
-plt.nocolor()
-plt.show()
+if args.pdf:
+    plt.savefig(sys.stdout.buffer, bbox_inches='tight')
+else:
+    if SIZE is not None and len(SIZE) > 0:
+        plt.figsize(w, h)
+    plt.nocolor()
+    plt.show()
