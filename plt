@@ -31,6 +31,8 @@ from math import ceil, sqrt
 # env variable to control plot size:
 # PLT_SIZE="w:h"
 SIZE = os.getenv('PLT_SIZE')
+SCATTER_SIZE = os.getenv('PLT_SCATTER_SIZE')
+BINS = os.getenv('PLT_BINS')
 
 # default SEPARATOR is &&
 SEPARATOR = os.getenv('PLT_SEPARATOR')
@@ -71,6 +73,11 @@ if SIZE is not None and len(SIZE) > 0:
     w = float(size[0])
     h = float(size[1])
 
+if SCATTER_SIZE is not None:
+    scatter_size=float(SCATTER_SIZE)
+else:
+    scatter_size=1
+
 # import dependencies only if necessary
 if args.pdf:
     import matplotlib
@@ -104,16 +111,27 @@ for ii in range(len(vv)):
         x = [v[2*i] for i in range(len(v)//2)]
         y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
         if label == "":
-            plt.scatter(x, y)
+
+            if args.pdf:
+                plt.scatter(x, y, s=scatter_size)
+            else:
+                plt.scatter(x, y)
         else:
-            plt.scatter(x, y, label=label)
+            if args.pdf:
+                plt.scatter(x, y, label=label, s=scatter_size)
+            else:
+                plt.scatter(x, y, label=label)
 
     if args.histogram:
-        bins = ceil(sqrt(len(v)))
-        if label == "":
-            plt.hist(v, bins)
+        if BINS is not None:
+            bins = int(BINS)
         else:
-            plt.hist(v, bins, label=label)
+            bins = ceil(sqrt(len(v)))
+
+        if label == "":
+            plt.hist(v, bins=bins)
+        else:
+            plt.hist(v, bins=bins, label=label)
 
 if args.pdf:
     if args.labels:
