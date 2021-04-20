@@ -48,6 +48,7 @@ group = parser.add_mutually_exclusive_group()
 group.add_argument('--line', '-l',      action='store_true')
 group.add_argument('--scatter', '-s',   action='store_true')
 group.add_argument('--histogram', '-t', action='store_true')
+group.add_argument('--density', '-d', action='store_true')
 args = parser.parse_args()
 
 # vector of vectors
@@ -86,12 +87,12 @@ if args.pdf:
     cm = 1/2.54  # centimeters in inches
     if SIZE is not None and len(SIZE) > 0:
         plt.figure(figsize=(w*cm, h*cm))
-    plt.rc('font', size=8) # size=8 works better with LaTeX
+    plt.rc('font', size=6) # size=8 works better with LaTeX
 else:
     import misc.plotext.plot as plt
 
 # default plot is line
-if not (args.line or args.scatter or args.histogram):
+if not (args.line or args.scatter or args.histogram or args.density):
     args.line = True
 
 # make plots
@@ -122,6 +123,24 @@ for ii in range(len(vv)):
             else:
                 plt.scatter(x, y, label=label)
 
+    if args.density:
+        x = [v[2*i] for i in range(len(v)//2)]
+        y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
+        if BINS is not None:
+            bins = int(BINS)
+        else:
+            bins = ceil(sqrt(sqrt(len(v))))
+        if label == "":
+            if args.pdf:
+                plt.hist2d(x, y, bins=(bins,bins))
+            else:
+                plt.scatter(x, y)
+        else:
+            if args.pdf:
+                plt.hist2d(x, y, label=label, bins=(bins,bins))
+            else:
+                plt.scatter(x, y, label=label)
+
     if args.histogram:
         if BINS is not None:
             bins = int(BINS)
@@ -133,9 +152,10 @@ for ii in range(len(vv)):
         else:
             plt.hist(v, bins=bins, label=label)
 
+
 if args.pdf:
-    if args.labels:
-        plt.legend()
+    #if args.labels:
+    #    plt.legend()
     plt.savefig(sys.stdout.buffer, bbox_inches='tight')
 else:
     plt.canvas_color('black')
