@@ -10,7 +10,7 @@ class _parameters():
     def __init__(self):
         self.width = None
         self.height = None
-        #self.force_size = None
+        self.force_size = False
 
         self.title = None
         self.xlabel = None
@@ -387,7 +387,7 @@ def _height_min():
 def _height():
     height = _set_var_if_none(par.height, par.height_max)
     height = abs(int(height))
-    if height > par.height_max: # and not par.force_size[0]:
+    if height > par.height_max and not par.force_size:
         height = par.height_max
     if height < par.height_min:
         height = par.height_min
@@ -420,7 +420,7 @@ def _width_min():
 def _width():
     width = _set_var_if_none(par.width, par.width_max)
     width = abs(int(width))
-    if width > par.width_max:# and not par.force_size[0]:
+    if width > par.width_max and not par.force_size:
         width = par.width_max
     if width < par.width_min:
         width = par.width_min
@@ -1002,6 +1002,7 @@ def terminal_size():
 def savefig(path = None):
     """\nIt saves the plot canvas (without colors) as a text file, at the address provided in input.\n"""
     par.nocolor = True
+    par.force_size = True
     _size_max()
 
     _height_min()
