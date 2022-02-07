@@ -1001,7 +1001,7 @@ def terminal_size():
 
 def savefig(path = None):
     """\nIt saves the plot canvas (without colors) as a text file, at the address provided in input.\n"""
-
+    par.nocolor = True
     _size_max()
 
     _height_min()
