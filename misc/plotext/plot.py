@@ -1001,6 +1001,35 @@ def terminal_size():
 
 def savefig(path = None):
     """\nIt saves the plot canvas (without colors) as a text file, at the address provided in input.\n"""
+
+    _size_max()
+
+    _height_min()
+    _height()
+
+    _ylim_data()
+    _ylim_plot()
+    _yticks()
+    
+    _width_min()
+    _width()
+    
+    _xlim_data()
+    _xlim_plot()
+    _xticks()
+
+    _matrix()
+    _grid()
+    _add_data()
+    _legend()
+
+    _yaxis()
+    _xaxis()
+    
+    _title()
+    _axes_label()
+
+    _canvas()
     path = _check_path(path)
     with open(path , "w+", encoding = "utf-8") as file:
         file.write(_remove_color(par.canvas))
