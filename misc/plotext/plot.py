@@ -1033,7 +1033,7 @@ def savefig(path = None):
     path = _check_path(path)
     with open(path , "w+", encoding = "utf-8") as file:
         file.write(_remove_color(par.canvas))
-    print("plot saved as " + path)
+    #print("plot saved as " + path)
 
 def colors():
     """\nIt shows the available full-ground and background color codes.\n"""
