@@ -27,6 +27,7 @@ import sys
 import os
 import re
 from math import ceil, sqrt
+from argparse import RawTextHelpFormatter
 
 # env variable to control plot size:
 # PLT_SIZE="w:h"
@@ -39,17 +40,41 @@ SEPARATOR = os.getenv('PLT_SEPARATOR')
 if SEPARATOR is None or len(SEPARATOR) == 0:
     SEPARATOR = '&&'
 
-parser = argparse.ArgumentParser(description='read floating points from stdin and plot in stdout')
-parser.add_argument("--pdf", action='store_true', default=False, help="output pdf to stdout")
+env_variables_help  = """
+
+environment variables:
+  PLT_SIZE              size of the plot with format w:h. w and h are interpreted as cm when using a graphical output and as the number of characters in text mode
+  PLT_SEPARATOR         separator for the input strem, default is &&
+  PLT_SCATTER_SIZE      size of the scatter dots (graphical output only)
+"""
+parser = argparse.ArgumentParser(description='read floating points from stdin and plot in stdout'+env_variables_help, formatter_class=RawTextHelpFormatter)
+
+parser.add_argument("out", nargs='?', help="optional output path, with support for the following extensions:\n  * py (matplotlib) \n  * pdf \n  * txt")
+#parser.add_argument("--pdf", action='store_true', default=False, help="output pdf to stdout")
+parser.add_argument("--input", '-i', metavar="FILE", type=str, help='use FILE as input instead of STDIN')
 parser.add_argument("--labels", type=str, nargs='*',
                     help='labels for the colors')
 
+
+
 group = parser.add_mutually_exclusive_group()
-group.add_argument('--line', '-l',      action='store_true')
+group.add_argument('--line', '-l',      action='store_true', help='default plot type')
 group.add_argument('--scatter', '-s',   action='store_true')
 group.add_argument('--histogram', '-t', action='store_true')
 group.add_argument('--density', '-d', action='store_true')
 args = parser.parse_args()
+
+# file_extension==".pdf" = False
+
+filename, file_extension = None, None
+
+if args.out:
+    filename, file_extension = os.path.splitext(args.out)
+
+if file_extension not in [None, '.pdf', '.py', '.txt']:
+    raise NotImplementedError(f"no support for file exension {file_extension}")
+
+
 
 # vector of vectors
 vv = []
@@ -80,7 +105,7 @@ else:
     scatter_size=1
 
 # import dependencies only if necessary
-if args.pdf:
+if file_extension==".pdf":
     import matplotlib
     matplotlib.use('pdf')
     import matplotlib.pyplot as plt
@@ -113,12 +138,12 @@ for ii in range(len(vv)):
         y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
         if label == "":
 
-            if args.pdf:
+            if file_extension==".pdf":
                 plt.scatter(x, y, s=scatter_size)
             else:
                 plt.scatter(x, y)
         else:
-            if args.pdf:
+            if file_extension==".pdf":
                 plt.scatter(x, y, label=label, s=scatter_size)
             else:
                 plt.scatter(x, y, label=label)
@@ -131,12 +156,12 @@ for ii in range(len(vv)):
         else:
             bins = ceil(sqrt(sqrt(len(v))))
         if label == "":
-            if args.pdf:
+            if file_extension==".pdf":
                 plt.hist2d(x, y, bins=(bins,bins))
             else:
                 plt.scatter(x, y)
         else:
-            if args.pdf:
+            if file_extension==".pdf":
                 plt.hist2d(x, y, label=label, bins=(bins,bins))
             else:
                 plt.scatter(x, y, label=label)
@@ -153,14 +178,19 @@ for ii in range(len(vv)):
             plt.hist(v, bins=bins, label=label)
 
 
-if args.pdf:
+if file_extension==".pdf":
     #if args.labels:
     #    plt.legend()
-    plt.savefig(sys.stdout.buffer, bbox_inches='tight')
+    # plt.savefig(sys.stdout.buffer, bbox_inches='tight')
+    plt.savefig(args.out, bbox_inches='tight')
 else:
     plt.canvas_color('black')
     plt.axes_color('black')
     plt.ticks_color('white')
     if SIZE is not None and len(SIZE) > 0:
         plt.figsize(w, h)
-    plt.show()
+
+    if file_extension == ".txt":
+        plt.savefig(os.path.realpath(args.out))
+    else:
+        plt.show()
