@@ -53,7 +53,6 @@ parser = argparse.ArgumentParser(description='read floating points from stdin an
 
 parser.add_argument("--pdf", action='store_true', default=False, help="output pdf to stdout")
 parser.add_argument("--py", action='store_true', default=False, help="output py program to stdout")
-parser.add_argument("--input", '-i', metavar="FILE", type=str, help='use FILE as input instead of STDIN')
 parser.add_argument("--labels", type=str, nargs='*',
                     help='labels for the colors')
 
@@ -64,9 +63,6 @@ group.add_argument('--scatter', '-s',   action='store_true')
 group.add_argument('--histogram', '-t', action='store_true')
 group.add_argument('--density', '-d', action='store_true')
 args = parser.parse_args()
-
-# file_extension==".pdf" = False
-
 
 # set up variables
 str_stdin = ""
@@ -111,7 +107,6 @@ for str_v in str_stdin.split(separator):
     x = [float(s) for s in str_v.split()]
     vv.append(x)
 
-
 # import dependencies only if necessary
 if args.pdf:
     # BEGIN py
@@ -122,6 +117,7 @@ if args.pdf:
     if w is not None:
         plt.figure(figsize=(w*cm, h*cm))
     plt.rc('font', size=6) # size=8 works better with LaTeX
+
     # END py
 else:
     import misc.plotext.plot as plt
@@ -130,7 +126,6 @@ else:
 # make plots
 
 if args.line:
-
     # BEGIN py# line
     for ii in range(len(vv)):
         v = vv[ii]
@@ -140,16 +135,14 @@ if args.line:
             plt.plot(v, label=label)
         else:
             plt.plot(v)
-    # END py line
+    # END py
 
 if args.scatter:
     # BEGIN py# scatter
     for ii in range(len(vv)):
         v = vv[ii]
-
         x = [v[2*i] for i in range(len(v)//2)]
         y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
-
         if labels and ii < len(labels):
             label = labels[ii]
             if args.pdf:
@@ -171,15 +164,12 @@ if args.density:
     # BEGIN py# density
     for ii in range(len(vv)):
         v = vv[ii]
-
         x = [v[2*i] for i in range(len(v)//2)]
         y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
         x = [v[2*i] for i in range(len(v)//2)]
         y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
-
         if bins is None:
             bins = ceil(sqrt(len(v)))
-
         if labels and ii < len(labels):
             label = labels[ii]
             if args.pdf:
@@ -203,7 +193,6 @@ if args.histogram:
         v = vv[ii]
         if bins is None:
             bins = ceil(sqrt(len(v)))
-
         if labels and ii < len(labels):
             label = labels[ii]
             plt.hist(v, bins=bins, label=label)
@@ -243,14 +232,16 @@ elif args.py:
         out = f"vv = {vv}\n" + out
         out = f"w = {w}\n" + out
         out = f"h = {h}\n" + out
-        out = f"separator = '{separator}'\n" + out
+        #out = f"separator = '{separator}'\n" + out
         if not args.density and labels:
             out = f"labels = {labels}\n" + out
         else:
             out = f"labels = None\n" + out
 
-        out = f"bins = {bins}\n" + out
-        out = f"scatter_size = {scatter_size}\n" + out
+        if args.histogram:
+            out = f"bins = {bins}\n" + out
+        if args.scatter:
+            out = f"scatter_size = {scatter_size}\n" + out
         print(out)
 
 else:
