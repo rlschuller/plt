@@ -2,7 +2,7 @@
 
 Read lists of numbers from stdin.
 
-For each list, numbers are separated by by [^0-9.\-e], and can be used for 3
+For each list, numbers are separated by by `[^0-9.\-e]`, and can be used for 3
 distinct types of plots:
 
     1) --line (-l)
