@@ -7,9 +7,6 @@ h = <<HEIGHT:None>>
 w = <<WIDTH:None>>
 vv = <<DATA:[]>>
 
-if w is not None:
-    plt.figure(figsize=(w*cm, h*cm))
-
 # scatter
 for ii in range(len(vv)):
     v = vv[ii]
