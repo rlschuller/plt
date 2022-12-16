@@ -8,8 +8,9 @@ distinct types of plots:
     1) --line (-l)
     2) --scatter (-s)
     3) --histogram (-t)
+    4) --normalized_histogram (-nt)
 
-With options 1 and 3, the list of numbers is interpreted as a 1D array, i.e.,
+With options 1 and 3 and 4, the list of numbers is interpreted as a 1D array, i.e.,
 
 ```
     (x1, x2, ..., xn).

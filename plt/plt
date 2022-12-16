@@ -38,6 +38,7 @@ group = parser.add_mutually_exclusive_group()
 group.add_argument('--line', '-l',      action='store_true', help='default plot type')
 group.add_argument('--scatter', '-s',   action='store_true')
 group.add_argument('--histogram', '-t', action='store_true')
+group.add_argument('--normalized_histogram', '-nt', action='store_true')
 group.add_argument('--density', '-d', action='store_true')
 args = parser.parse_args()
 
@@ -100,6 +101,8 @@ if args.scatter:
     plot_type = "scatter"
 if args.histogram:
     plot_type = "histogram"
+if args.normalized_histogram:
+    plot_type = "normalized_histogram"
 if args.density:
     plot_type = "density"
 
@@ -113,7 +116,7 @@ template = re.sub('<<LABELS:.*>>', str(labels), template)
 template = re.sub('<<HEIGHT:.*>>', str(h), template)
 template = re.sub('<<WIDTH:.*>>', str(w), template)
 template = re.sub('<<DATA:.*>>', str(vv), template)
-if plot_type == "histogram" or plot_type == "density":
+if plot_type == "histogram" or plot_type == "density" or plot_type == "normalized_histogram":
     template = re.sub('<<BINS:.*>>', str(bins), template)
 if plot_type == "scatter":
     template = re.sub('<<SCATTER_SIZE:.*>>', str(scatter_size), template)
