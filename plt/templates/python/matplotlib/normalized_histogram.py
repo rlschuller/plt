@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 bins = <<BINS:None>>
 labels = <<LABELS:None>>
 h = <<HEIGHT:None>>
+w = <<WIDTH:None>>
+vv = <<DATA:[]>>
 
 cm = 1/2.54  # centimeters in inches
 if w is not None:
