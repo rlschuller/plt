@@ -17,16 +17,20 @@ if w is not None:
     plt.figure(figsize=(w*cm, h*cm))
 plt.rc('font', size=6) # size=8 works better with LaTeX
 
+min_val = min([min(v) for v in vv])
+max_val = max([max(v) for v in vv])
+
+if bins is None:
+    bins = ceil(sqrt(max([len(v) for v in vv])))
+
 # histogram
 for ii in range(len(vv)):
     v = vv[ii]
-    if bins is None:
-        bins = ceil(sqrt(len(v)))
     if labels and ii < len(labels):
         label = labels[ii]
-        plt.hist(v, bins=bins, label=label, alpha=alpha)
+        plt.hist(v, bins=bins, label=label, alpha=alpha, range=(min_val, max_val))
     else:
-        plt.hist(v, bins=bins, alpha=alpha)
+        plt.hist(v, bins=bins, alpha=alpha, range=(min_val, max_val))
 
 if labels:
     plt.legend(labels)
