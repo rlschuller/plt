@@ -120,15 +120,15 @@ template = re.sub('<<DATA:.*>>', str(vv), template)
 if args.alpha:
     template = re.sub('<<ALPHA:.*>>', str(args.alpha), template)
 
-# substitute remaining by default values
-template = re.sub('<<.*:', '', template)
-template = re.sub('>>', '', template)
-
 
 if plot_type == "histogram" or plot_type == "density" or plot_type == "normalized_histogram":
     template = re.sub('<<BINS:.*>>', str(bins), template)
 if plot_type == "scatter":
     template = re.sub('<<SCATTER_SIZE:.*>>', str(scatter_size), template)
+
+# substitute remaining by default values
+template = re.sub('<<.*:', '', template)
+template = re.sub('>>', '', template)
 
 if args.py:
     print(template)
