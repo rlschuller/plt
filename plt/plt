@@ -37,6 +37,7 @@ parser.add_argument("--alpha", "-a", type=float,
                     help='opacity for the templates that support it')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--line', '-l',      action='store_true', help='default plot type')
+group.add_argument('--line_2d', '-l2',      action='store_true', help='line plot with 2D coordinates')
 group.add_argument('--scatter', '-s',   action='store_true')
 group.add_argument('--histogram', '-t', action='store_true')
 group.add_argument('--normalized_histogram', '-nt', action='store_true')
@@ -98,6 +99,8 @@ template = ""
 plot_type ="line"
 if args.line:
     plot_type = "line"
+if args.line_2d:
+    plot_type = "line_2d"
 if args.scatter:
     plot_type = "scatter"
 if args.histogram:
