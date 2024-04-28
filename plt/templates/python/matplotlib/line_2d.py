@@ -2,32 +2,30 @@ import sys
 import matplotlib
 if "<<FORMAT:pdf>>" == "pdf":
     matplotlib.use('pdf')
-from math import ceil, sqrt
 import matplotlib.pyplot as plt
 
 # format: <<ID:default_value>>
-bins = <<BINS:None>>
+scatter_size = <<SCATTER_SIZE:1>>
 labels = <<LABELS:None>>
 h = <<HEIGHT:None>>
 w = <<WIDTH:None>>
 vv = <<DATA:[]>>
-alpha = <<ALPHA:1>>
 
 cm = 1/2.54  # centimeters in inches
 if w is not None:
     plt.figure(figsize=(w*cm, h*cm))
 plt.rc('font', size=6) # size=8 works better with LaTeX
 
-# histogram
+# scatter
 for ii in range(len(vv)):
     v = vv[ii]
-    if bins is None:
-        bins = ceil(sqrt(len(v)))
+    x = [v[2*i] for i in range(len(v)//2)]
+    y = [v[2*i+1] for i in range(len(v)//2) if 2*i + 1 < len(v)]
     if labels and ii < len(labels):
         label = labels[ii]
-        plt.hist(v, bins=bins, label=label, density=True, alpha=alpha)
+        plt.plot(x, y, label=label)
     else:
-        plt.hist(v, bins=bins, density=True, alpha=alpha)
+        plt.plot(x, y)
 
 if labels:
     plt.legend(labels)

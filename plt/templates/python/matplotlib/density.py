@@ -1,7 +1,8 @@
 import sys
 import matplotlib
 from math import ceil, sqrt
-matplotlib.use('pdf')
+if "<<FORMAT:pdf>>" == "pdf":
+    matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 
 # format: <<ID:default_value>>
@@ -27,4 +28,4 @@ for ii in range(len(vv)):
         bins = ceil(sqrt(sqrt(len(v))))
     plt.hist2d(x, y, bins=(bins,bins)) # no label suport for hist2d in matplotlib
 
-plt.savefig(sys.stdout.buffer, bbox_inches='tight')
+plt.savefig(sys.stdout, bbox_inches='tight', dpi=200)
