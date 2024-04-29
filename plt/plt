@@ -9,6 +9,7 @@ from argparse import RawTextHelpFormatter
 import importlib_resources
 from io import StringIO, BytesIO
 from contextlib import redirect_stdout
+import subprocess
 from subprocess import Popen, PIPE
 
 # env variable to control plot size:
@@ -118,25 +119,28 @@ if args.density:
 if args.pdf or args.py or args.icat:
     template = (templates / "python" / "matplotlib" / (plot_type+".py")  ).read_text()
     if args.pdf:
-        template = re.sub('<<FORMAT:.*>>', 'pdf', template)
+        template = re.sub('<<FORMAT:[^>]*>>', 'pdf', template)
     if args.icat:
-        template = re.sub('<<FORMAT:.*>>', 'png', template)
+        resolution = subprocess.run(["kitty", "icat", "--print-window-size"], capture_output=True)
+        resolution = [int(x) for x in resolution.stdout.decode('utf-8').split("x")]
+        template = re.sub('<<RESOLUTION:[^>]*>>', str(resolution), template)
+        template = re.sub('<<FORMAT:[^>]*>>', 'png', template)
 
 else:
     template = (templates / "python" / "plotext" / (plot_type+".py")  ).read_text()
 
-template = re.sub('<<LABELS:.*>>', str(labels), template)
-template = re.sub('<<HEIGHT:.*>>', str(h), template)
-template = re.sub('<<WIDTH:.*>>', str(w), template)
-template = re.sub('<<DATA:.*>>', str(vv), template)
+template = re.sub('<<LABELS:[^>]*>>', str(labels), template)
+template = re.sub('<<HEIGHT:[^>]*>>', str(h), template)
+template = re.sub('<<WIDTH:[^>]*>>', str(w), template)
+template = re.sub('<<DATA:[^>]*>>', str(vv), template)
 if args.alpha:
-    template = re.sub('<<ALPHA:.*>>', str(args.alpha), template)
+    template = re.sub('<<ALPHA:[^>]*>>', str(args.alpha), template)
 
 
 if plot_type == "histogram" or plot_type == "density" or plot_type == "normalized_histogram":
-    template = re.sub('<<BINS:.*>>', str(bins), template)
+    template = re.sub('<<BINS:[^>]*>>', str(bins), template)
 if plot_type == "scatter":
-    template = re.sub('<<SCATTER_SIZE:.*>>', str(scatter_size), template)
+    template = re.sub('<<SCATTER_SIZE:[^>]*>>', str(scatter_size), template)
 
 # substitute remaining by default values
 template = re.sub('<<[^:]*:', '', template)

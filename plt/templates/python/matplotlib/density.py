@@ -11,10 +11,13 @@ h = <<HEIGHT:None>>
 w = <<WIDTH:None>>
 vv = <<DATA:[]>>
 bins = <<BINS:None>>
+resolution = <<RESOLUTION:None>>
 
 cm = 1/2.54  # centimeters in inches
 if w is not None:
-    plt.figure(figsize=(w*cm, h*cm))
+    fig = plt.figure(figsize=(w*cm, h*cm))
+elif resolution:
+    fig = plt.figure(figsize=(resolution[0]/200, resolution[1]/200-.35))
 plt.rc('font', size=6) # size=8 works better with LaTeX
 
 # density
@@ -28,4 +31,12 @@ for ii in range(len(vv)):
         bins = ceil(sqrt(sqrt(len(v))))
     plt.hist2d(x, y, bins=(bins,bins)) # no label suport for hist2d in matplotlib
 
-plt.savefig(sys.stdout, bbox_inches='tight', dpi=200)
+plt.tight_layout()
+if "<<FORMAT:pdf>>" == "pdf":
+    plt.savefig(sys.stdout.buffer, bbox_inches='tight', dpi=200)
+else:
+    dpi=200
+    if resolution and not w:
+        size = fig.get_size_inches().tolist()
+        dpi = min([resolution[0]/(size[0]), resolution[1]/size[1]])
+    plt.savefig(sys.stdout, bbox_inches='tight', dpi=dpi)
