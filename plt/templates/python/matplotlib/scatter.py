@@ -1,8 +1,10 @@
 import sys
 import matplotlib
+import matplotlib.pyplot as plt
 if "<<FORMAT:pdf>>" == "pdf":
     matplotlib.use('pdf')
-import matplotlib.pyplot as plt
+else:
+    plt.style.use('dark_background')
 
 # format: <<ID:default_value>>
 scatter_size = <<SCATTER_SIZE:1>>

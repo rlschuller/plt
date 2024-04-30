@@ -1,9 +1,11 @@
 import sys
 import matplotlib
+import matplotlib.pyplot as plt
 if "<<FORMAT:pdf>>" == "pdf":
     matplotlib.use('pdf')
+else:
+    plt.style.use('dark_background')
 from math import ceil, sqrt
-import matplotlib.pyplot as plt
 
 # format: <<ID:default_value>>
 bins = <<BINS:None>>
