@@ -50,13 +50,7 @@ group.add_argument('--density', '-d', action='store_true')
 args = parser.parse_args()
 
 # set up variables
-str_stdin = ""
-
-# put stdin in a string 
-for line in sys.stdin:
-    if 'q' == line.rstrip():
-        break
-    str_stdin += line
+str_stdin = "\n".join(sys.stdin)
 
 if SIZE is not None and len(SIZE) > 0:
     size = SIZE.split(':')
@@ -88,7 +82,7 @@ vv = []
 
 # populate vv with vector of vectors of numbers
 for str_v in str_stdin.split(separator):
-    str_v = re.sub(r'[^0-9.\-eE+]', ' ', str_v)
+    str_v = re.sub(R'[^0-9.-eE+]', ' ', str_v)
     x = []
     for s in str_v.split():
         try:
