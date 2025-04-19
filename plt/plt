@@ -33,6 +33,7 @@ environment variables:
 parser = argparse.ArgumentParser(description='read floating points from stdin and plot in stdout'+env_variables_help, formatter_class=RawTextHelpFormatter)
 
 parser.add_argument("--pdf", action='store_true', default=False, help="output pdf to stdout")
+parser.add_argument("--png", action='store_true', default=False, help="output png to stdout")
 parser.add_argument("-i", "--icat", action='store_true', default=False, help="output using kitten icat")
 parser.add_argument("--py", action='store_true', default=False, help="output py program to stdout")
 parser.add_argument("--labels", type=str, nargs='*',
@@ -110,10 +111,12 @@ if args.density:
     plot_type = "density"
 
 # import dependencies only if necessary
-if args.pdf or args.py or args.icat:
+if args.pdf or args.png or args.py or args.icat:
     template = (templates / "python" / "matplotlib" / (plot_type+".py")  ).read_text()
     if args.pdf:
         template = re.sub('<<FORMAT:[^>]*>>', 'pdf', template)
+    if args.png:
+        template = re.sub('<<FORMAT:[^>]*>>', 'png', template)
     if args.icat:
         resolution = subprocess.run(["kitty", "icat", "--print-window-size"], capture_output=True)
         resolution = [int(x) for x in resolution.stdout.decode('utf-8').split("x")]
