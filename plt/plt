@@ -8,6 +8,7 @@ import re
 from argparse import RawTextHelpFormatter
 import importlib_resources
 from io import StringIO, BytesIO
+import io
 from contextlib import redirect_stdout
 import subprocess
 from subprocess import Popen, PIPE
@@ -17,6 +18,7 @@ from subprocess import Popen, PIPE
 SIZE = os.getenv('PLT_SIZE')
 SCATTER_SIZE = os.getenv('PLT_SCATTER_SIZE')
 BINS = os.getenv('PLT_BINS')
+USE_SIXEL = os.getenv('PLT_SIXEL')
 
 # default SEPARATOR is &&
 SEPARATOR = os.getenv('PLT_SEPARATOR')
@@ -29,12 +31,13 @@ environment variables:
   PLT_SIZE              size of the plot with format w:h. w and h are interpreted as cm when using a graphical output and as the number of characters in text mode
   PLT_SEPARATOR         separator for the input strem, default is &&
   PLT_SCATTER_SIZE      size of the scatter dots (graphical output only)
+  PLT_SIXEL             use sixel by default, instead of plottext
 """
 parser = argparse.ArgumentParser(description='read floating points from stdin and plot in stdout'+env_variables_help, formatter_class=RawTextHelpFormatter)
 
 parser.add_argument("--pdf", action='store_true', default=False, help="output pdf to stdout")
 parser.add_argument("--png", action='store_true', default=False, help="output png to stdout")
-parser.add_argument("-i", "--icat", action='store_true', default=False, help="output using kitten icat")
+parser.add_argument("-i", "--sixel", action='store_true', default=False, help="output using sixel (requires img2sixel)")
 parser.add_argument("--py", action='store_true', default=False, help="output py program to stdout")
 parser.add_argument("--labels", type=str, nargs='*',
                     help='labels for the colors')
@@ -53,6 +56,9 @@ group.add_argument('--histogram', '-t', action='store_true')
 group.add_argument('--normalized_histogram', '-nt', action='store_true')
 group.add_argument('--density', '-d', action='store_true')
 args = parser.parse_args()
+
+if not args.pdf and not args.png and USE_SIXEL:
+    args.sixel = True
 
 # set up variables
 str_stdin = "\n".join(sys.stdin)
@@ -115,17 +121,16 @@ if args.density:
     plot_type = "density"
 
 # import dependencies only if necessary
-if args.pdf or args.png or args.py or args.icat:
+if args.pdf or args.png or args.py or args.sixel:
     template = (templates / "python" / "matplotlib" / (plot_type+".py")  ).read_text()
     if args.pdf:
         template = re.sub('<<FORMAT:[^>]*>>', 'pdf', template)
     if args.png:
         template = re.sub('<<FORMAT:[^>]*>>', 'png', template)
-    if args.icat:
-        resolution = subprocess.run(["kitty", "icat", "--print-window-size"], capture_output=True)
-        resolution = [int(x) for x in resolution.stdout.decode('utf-8').split("x")]
-        template = re.sub('<<RESOLUTION:[^>]*>>', str(resolution), template)
+    if args.sixel:
         template = re.sub('<<FORMAT:[^>]*>>', 'png', template)
+        template = re.sub('<<DARK_BACKGROUND:[^>]*>>', 'True', template)
+
 
 else:
     template = (templates / "python" / "plotext" / (plot_type+".py")  ).read_text()
@@ -159,14 +164,14 @@ if args.py:
     print(template)
 else:
 
-    if args.icat:
+    if args.sixel:
         f = BytesIO()
         old_stdout = sys.stdout
         sys.stdout = f
         exec(template, {})
         sys.stdout = old_stdout
 
-        process = Popen(['kitty', 'icat'], stdin=PIPE, bufsize=-1)
+        process = Popen(['img2sixel'], stdin=PIPE, bufsize=-1)
         process.communicate(input=f.getvalue())
 
     else:

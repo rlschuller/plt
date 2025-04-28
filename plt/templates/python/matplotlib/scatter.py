@@ -1,10 +1,9 @@
 import sys
 import matplotlib
 import matplotlib.pyplot as plt
+
 if "<<FORMAT:pdf>>" == "pdf":
     matplotlib.use('pdf')
-else:
-    plt.style.use('dark_background')
 
 # format: <<ID:default_value>>
 scatter_size = <<SCATTER_SIZE:1>>
@@ -15,6 +14,10 @@ vv = <<DATA:[]>>
 resolution = <<RESOLUTION:None>>
 xlim = <<XLIM:None>>
 ylim = <<YLIM:None>>
+dark_background = <<DARK_BACKGROUND:False>>
+
+if dark_background:
+    plt.style.use('dark_background')
 
 cm = 1/2.54  # centimeters in inches
 if w is not None:

@@ -1,11 +1,10 @@
 import sys
 import matplotlib
 import matplotlib.pyplot as plt
+from math import ceil, sqrt
+
 if "<<FORMAT:pdf>>" == "pdf":
     matplotlib.use('pdf')
-else:
-    plt.style.use('dark_background')
-from math import ceil, sqrt
 
 # format: <<ID:default_value>>
 bins = <<BINS:None>>
@@ -15,6 +14,10 @@ w = <<WIDTH:None>>
 vv = <<DATA:[]>>
 alpha = <<ALPHA:1>>
 resolution = <<RESOLUTION:None>>
+dark_background = <<DARK_BACKGROUND:False>>
+
+if dark_background:
+    plt.style.use('dark_background')
 
 cm = 1/2.54  # centimeters in inches
 if w is not None:
