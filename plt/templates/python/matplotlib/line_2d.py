@@ -13,6 +13,8 @@ h = <<HEIGHT:None>>
 w = <<WIDTH:None>>
 vv = <<DATA:[]>>
 resolution = <<RESOLUTION:None>>
+xlim = <<XLIM:None>>
+ylim = <<YLIM:None>>
 
 cm = 1/2.54  # centimeters in inches
 if w is not None:
@@ -31,6 +33,12 @@ for ii in range(len(vv)):
         plt.plot(x, y, label=label)
     else:
         plt.plot(x, y)
+
+if xlim is not None:
+    plt.xlim(xlim)
+
+if ylim is not None:
+    plt.ylim(ylim)
 
 if labels:
     plt.legend(labels)

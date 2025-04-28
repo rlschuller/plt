@@ -38,6 +38,10 @@ parser.add_argument("-i", "--icat", action='store_true', default=False, help="ou
 parser.add_argument("--py", action='store_true', default=False, help="output py program to stdout")
 parser.add_argument("--labels", type=str, nargs='*',
                     help='labels for the colors')
+parser.add_argument("-x","--xlim", type=float, nargs=2,
+                    help='x limits')
+parser.add_argument("-y","--ylim", type=float, nargs=2,
+                    help='y limits')
 
 parser.add_argument("--alpha", "-a", type=float,
                     help='opacity for the templates that support it')
@@ -139,9 +143,17 @@ if plot_type == "histogram" or plot_type == "density" or plot_type == "normalize
 if plot_type == "scatter":
     template = re.sub('<<SCATTER_SIZE:[^>]*>>', str(scatter_size), template)
 
+if args.xlim:
+    template = re.sub('<<XLIM:[^>]*>>', str(args.xlim), template)
+
+if args.ylim:
+    template = re.sub('<<YLIM:[^>]*>>', str(args.ylim), template)
+
 # substitute remaining by default values
 template = re.sub('<<[^:]*:', '', template)
 template = re.sub('>>', '', template)
+
+
 
 if args.py:
     print(template)

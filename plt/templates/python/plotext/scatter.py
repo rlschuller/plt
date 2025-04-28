@@ -6,6 +6,8 @@ labels = <<LABELS:None>>
 h = <<HEIGHT:None>>
 w = <<WIDTH:None>>
 vv = <<DATA:[]>>
+xlim = <<XLIM:None>>
+ylim = <<YLIM:None>>
 
 # scatter
 for ii in range(len(vv)):
@@ -17,6 +19,12 @@ for ii in range(len(vv)):
         plt.scatter(x, y, label=label)
     else:
         plt.scatter(x, y)
+
+if xlim is not None:
+    plt.xlim(left=xlim[0], right=xlim[1])
+
+if ylim is not None:
+    plt.ylim(lower=ylim[0], upper=ylim[1])
 
 plt.canvas_color('black')
 plt.axes_color('black')

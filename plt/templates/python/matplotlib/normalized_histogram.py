@@ -34,6 +34,12 @@ for ii in range(len(vv)):
     else:
         plt.hist(v, bins=bins, density=True, alpha=alpha)
 
+if xlim is not None:
+    plt.xlim(xlim)
+
+if ylim is not None:
+    plt.ylim(ylim)
+
 if labels:
     plt.legend(labels)
 
