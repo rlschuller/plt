@@ -93,7 +93,7 @@ vv = []
 
 # populate vv with vector of vectors of numbers
 for str_v in str_stdin.split(separator):
-    str_v = re.sub(R'[^0-9.-eE+]', ' ', str_v)
+    str_v = re.sub(R'[^0-9.\-eE+]', ' ', str_v)
     x = []
     for s in str_v.split():
         try:
